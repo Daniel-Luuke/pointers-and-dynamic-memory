@@ -1,28 +1,29 @@
 #include <iostream>
 using namespace std;
 
-// A functiom that allocates memory but forgets to delete it
-void createLeak() {
+// A function that allocates memory and properly deletes it
+void fixLeak() {
     //'new int' allocates memory on the HEAP (dynamic memory) for one integer.
     //It returns the memory address, which we store in 'ptr'.
     int* ptr = new int(42);
 
-    cout << "Inside function. The value is: " << *ptr << endl;
+    cout << "Inside fixed function. Value: " << *ptr << endl;
     cout << "Memory allocated at address: " << ptr << endl;
 
-    //The LEAK: The function ends here.
-    //The local variable 'ptr' is destroyed, but the memory on the heap
-    //It was pointing to is NEVE freed. We have lost the address,
-    //and the memory is now unreachable but still reserved by the OS.
+    //The FIX: The 'delete' operator frees the memory back to the operating system.
+    delete ptr;
+
+    //GOOD PRACTICE: Set the pointer to nullptr after deleting it
+    //This prevents "dangling pointers" (pointers that point to freed memory)
+    ptr = nullptr;
+
+    cout << "Memory has been successfully freed." << endl;
 }
 
 int main() {
-    cout <<"Calling function that leaks memory..." << endl;
-    createLeak();
-    cout << "Function finished. The memory is now leaked." << endl;
-
-    //If we called creatLeak() in a loop a million times,
-    //the program would consume giabytes of RAM and crash
+    cout <<"--- Testing the Fix ---" << endl;
+    fixLeak();
+    
 
     return 0;
 
